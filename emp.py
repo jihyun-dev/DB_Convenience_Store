@@ -2,11 +2,12 @@ import pymysql
 
 def find_emp(emp_no):
 
-    conn = pymysql.connect(host='192.168.56.101', port=4567 ,user='project_naji',password='ghgh77',db='Convinience_store')
+    conn = pymysql.connect(host='192.168.56.101', port=4567 ,user='project_naji',password='ghgh77',
+                           db='Convenience_store')
     cur = conn.cursor()
 
-    select_emp = "SELECT * FROM EMPLOYEE WHERE Emp_no =" + str(emp_no)
-    cur.execute(select_emp)
+    select_emp = "SELECT * FROM EMPLOYEE WHERE Emp_no = %s "
+    cur.execute(select_emp, emp_no)
     res = cur.fetchall()
 
     #직원 조회 성공
