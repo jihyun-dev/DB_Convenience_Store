@@ -1,4 +1,7 @@
 import pymysql
+# 상품 판매 시간을 위한 모듈
+import time
+from datetime import datetime
 
 conn = pymysql.connect(host='192.168.56.101', port=4567, user='project_naji', password='ghgh77', db='Convenience_store')
 cur = conn.cursor()
@@ -54,3 +57,34 @@ def put_product(product_no, product_name, product_date, price, product_quantity)
 
     print("상품 입고 완료: ", product_no, product_name, product_date, price, product_quantity)
 
+def create_orderno():
+    # 주문 번호를 가장 '큰 번호 + 1'로 만들기 위한 기능
+    find_orderno = "SELECT MAX(Order_no) FROM ORDERS"
+    cur.execute(find_orderno)
+    res = cur.fetchall()
+    return res[0][0]
+
+
+def sell_product(product_no, order_quantity, cust_no, payment_type, emp_no):
+    # 상품 판매 기능
+
+    # 1. 판매 정보 DB에 추가
+    time = datetime.now()
+    sell_date = time.year + "-" + time.month + "-" + time.day
+    sell_time = time.hour + ":" + time.minute
+    order_no = create_orderno()
+
+         # ORDER 테이블 insert
+    insert_order = "INSERT INTO ORDERS VALUES ( %s, %s, %s, %s, %s)"
+    order_data = (order_no, cust_no, emp_no, sell_date , sell_time, payment_type )
+    cur.execute(insert_order, order_data)
+
+         # ORDER_LIST 테이블 insert
+    insert_orderlist = "INSERT INTO ORDERS VALUES ( %s, %s, %s)"
+    orderlist_data = (insert_orderlist, product_no, order_quantity)
+    cur.execute(insert_orderlist, orderlist_data)가
+
+    # 2. 상품 수량 변경
+
+
+    res = cur.fetchall()

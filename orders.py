@@ -7,15 +7,16 @@ def show_orders():
                            db='Convenience_store')
     cur = conn.cursor()
 
-    show_orders = "SELECT o.Order_no, o.Order_date, o.Order_time, c.Cust_name, p.Product_name, p.Price, ol.Order_quantity, e.Emp_name, o.Payment_type FROM ORDER_LIST ol, ORDERS o,PRODUCT p, EMPLOYEE e, CUSTOMER c WHERE o.Order_no = ol.Order_no AND ol.Product_no = p.Product_no AND o.Emp_no = e.Emp_no and c.Cust_no = o.Cust_no"
+    show_orders = "SELECT o.Order_no, o.Order_date, o.Order_time, c.Cust_name, p.Product_name, p.Price," \
+                  "ol.Order_quantity, e.Emp_name, o.Payment_type FROM ORDER_LIST ol, ORDERS o,PRODUCT p, EMPLOYEE e, CUSTOMER c" \
+                  " WHERE o.Order_no = ol.Order_no AND ol.Product_no = p.Product_no AND o.Emp_no = e.Emp_no and c.Cust_no = o.Cust_no"
     # select_data = (Order_no, Order_no)
     cur.execute(show_orders)
     res = cur.fetchall()
 
     #판매 내역 조회 성공
-    print("\n============================================================================"
-          "판매 내역"
-          "================================================================================")
+    print("\n============================================================================ 판매 내역 "
+          "===============================================================================")
 
     if res:
         for row in res:
@@ -27,3 +28,4 @@ def show_orders():
     # 판매 내역 조회 실패
     else:
         print("=============== 판매 내역 조회 실패, 다시 시도해주세요. ===============\n")
+
