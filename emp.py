@@ -5,7 +5,7 @@ cur = conn.cursor()
 
 
 def show_emp():
-    # 직원 목록 출력 기
+    # 직원 목록 출력 기능
     select_emp = "SELECT * FROM EMPLOYEE"
     cur.execute(select_emp)
     res = cur.fetchall()
