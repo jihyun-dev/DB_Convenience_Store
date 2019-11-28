@@ -10,6 +10,7 @@ def print_menu():
 
 
 start_work = True
+global emp_no
 print("\n********************************************* \n"
          "       편의점 상품 판매 및 재고 관리 시스템 \n"
          "********************************************* \n\n")
@@ -57,9 +58,16 @@ while start_work:
             cust_no = str((input('고객 번호: ')))
             payment_type = str((input('결제 방법: ')))
 
-            create_orderno()
-            # sell_product(product_no, order_quantity, cust_no, payment_type, emp_no)
 
+            create_orderno()
+            # 주문 번호를 가장 '큰 번호 + 1'로 만들기 위한 함수
+            exist_quantity = check_product(product_no, order_quantity)
+            # 입력 수량만큼 판매가 가능한 지 확인하는 기능, 가능하면 재고 수량, 불가하면 False를 반환
+
+            if exist_quantity:
+                sell_product(product_no, order_quantity, cust_no, payment_type, emp_no, exist_quantity)
+            else:
+                print("**** 판매 불가 **** 재고가 부족합니다. 상품 수량을 다시 확인해주세요.")
 
         if menu_num == 4:
             show_orders()

@@ -57,34 +57,56 @@ def put_product(product_no, product_name, product_date, price, product_quantity)
 
     print("상품 입고 완료: ", product_no, product_name, product_date, price, product_quantity)
 
+
 def create_orderno():
     # 주문 번호를 가장 '큰 번호 + 1'로 만들기 위한 기능
     find_orderno = "SELECT MAX(Order_no) FROM ORDERS"
     cur.execute(find_orderno)
     res = cur.fetchall()
-    return res[0][0]
+    return int(res[0][0])
 
 
-def sell_product(product_no, order_quantity, cust_no, payment_type, emp_no):
+def check_product(product_no, order_quantity):
+    # 입력 수량만큼 판매가 가능한 지 확인하는 기능
+    select_quantity = "SELECT Product_quantity FROM PRODUCT WHERE Product_no = %s"
+    cur.execute(select_quantity, product_no)
+    res = cur.fetchall()
+    print("PNO: ", product_no)
+    print("RES: ", res)
+    exist_quantity = int(res[0][0])
+
+    if exist_quantity >= order_quantity:
+        return exist_quantity
+    else:
+        return False
+
+
+def sell_product(product_no, order_quantity, cust_no, payment_type, emp_no, exist_quantity):
     # 상품 판매 기능
 
     # 1. 판매 정보 DB에 추가
     time = datetime.now()
-    sell_date = time.year + "-" + time.month + "-" + time.day
-    sell_time = time.hour + ":" + time.minute
-    order_no = create_orderno()
+    sell_date = str(time.year) + "-" + str(time.month) + "-" + str(time.day)
+    sell_time = str(time.hour) + ":" + str(time.minute)
+    order_no = str(create_orderno() + 1)
 
          # ORDER 테이블 insert
-    insert_order = "INSERT INTO ORDERS VALUES ( %s, %s, %s, %s, %s)"
-    order_data = (order_no, cust_no, emp_no, sell_date , sell_time, payment_type )
+    insert_order = "INSERT INTO ORDERS VALUES ( %s, %s, %s, %s, %s, %s)"
+    order_data = (order_no, cust_no, emp_no, sell_date, sell_time, payment_type)
+    print(order_no, cust_no, emp_no, sell_date, sell_time, payment_type)
     cur.execute(insert_order, order_data)
 
          # ORDER_LIST 테이블 insert
     insert_orderlist = "INSERT INTO ORDERS VALUES ( %s, %s, %s)"
-    orderlist_data = (insert_orderlist, product_no, order_quantity)
-    cur.execute(insert_orderlist, orderlist_data)가
+    orderlist_data = (insert_orderlist, order_no, product_no, str(order_quantity))
+    cur.execute(insert_orderlist, orderlist_data)
 
     # 2. 상품 수량 변경
 
+    change_quantity = exist_quantity - order_quantity
+    update_product = "UPDATE PRODUCT SET Product_quantity = %s WHERE Product_no = %s"
+    update_data = (change_quantity, product_no)
+    cur.execute(update_product, update_data)
 
-    res = cur.fetchall()
+    print("=============== 상품 판매 완료. 감사합니다. ===============\n")
+    show_product()
