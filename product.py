@@ -67,16 +67,25 @@ def create_orderno():
 
 
 def check_product(product_no, order_quantity):
-    # 입력 수량만큼 판매가 가능한 지 확인하는 기능
+
+    # 1. 입력한 상품 번호의 상품이 존재하는 지 확인하는 기
     select_quantity = "SELECT Product_quantity FROM PRODUCT WHERE Product_no = %s"
     cur.execute(select_quantity, product_no)
     res = cur.fetchall()
-    exist_quantity = int(res[0][0])
 
-    if exist_quantity >= order_quantity:
-        return exist_quantity
-    else:
+    if bool(res) is False :
+        print("**** 판매 불가 ****")
         return False
+
+    # 2. 입력 수량만큼 판매가 가능한 지 확인하는 기능
+    while res:
+        exist_quantity = int(res[0][0])
+
+        if exist_quantity >= order_quantity:
+            return exist_quantity
+        else:
+            print("상품이 존재하지 않거나, 재고가 부족합니다. 상품 번호와 수량을 다시 확인해주세요.")
+            return False
 
 
 def sell_product(product_no, order_quantity, cust_no, payment_type, emp_no, exist_quantity):
@@ -99,11 +108,12 @@ def sell_product(product_no, order_quantity, cust_no, payment_type, emp_no, exis
     cur.execute(insert_orderlist, orderlist_data)
 
     # 2. 상품 수량 변경
-
     change_quantity = exist_quantity - order_quantity
     update_product = "UPDATE PRODUCT SET Product_quantity = %s WHERE Product_no = %s"
     update_data = (change_quantity, product_no)
     cur.execute(update_product, update_data)
 
     print("=============== 상품 판매 완료. 감사합니다. ===============\n")
+    conn.commit()
     show_product()
+

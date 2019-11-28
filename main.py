@@ -21,6 +21,8 @@ start_work = int((input('<선택>: ')))
 while start_work:
     if start_work == 1:
         # 직원 출근
+
+        show_emp()
         print("<직원 출근> 출근할 근무자 번호를 입력하세요.")
         emp_no = str((input('근무자 번호: ')))
         find_emp(emp_no) # 근무자 번호 조회
