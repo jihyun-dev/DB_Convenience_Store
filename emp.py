@@ -13,7 +13,7 @@ def find_emp(emp_no):
     #직원 조회 성공
     if res:
         res_emp_name = res[0][1]
-        print("=============== 출근 직원: ", res_emp_name)
+        print("=============== 출근 직원: ", res_emp_name, "\n")
 
     # 직원 조회 실패
     else:

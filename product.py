@@ -4,16 +4,19 @@ conn = pymysql.connect(host='192.168.56.101', port=4567, user='project_naji', pa
 cur = conn.cursor()
 
 
-def find_product():
+def show_product():
+    # 재고 확인 기능
     select_product = "SELECT * FROM PRODUCT"
     cur.execute(select_product)
     res = cur.fetchall()
 
     # 상품 조회 성공
     if res:
-        print("<상품 이름 \t 판매 단가 \t 재고 수량>")
+        print("=============================================")
+        print("  <상품 번호 \t 상품 이름 \t 판매 단가 \t 재고 수량>   ")
         for row in res:
-            print(row[1],"-", row[3],"원 -", row[4],"개")
+            print(row[0],"-", row[1],"-", row[3],"원 -", row[4],"개")
+        print("=============================================")
 
     # 상품 조회 실패
     else:
@@ -23,9 +26,7 @@ def find_product():
 
 
 def put_product(product_no, product_name, product_date, price, product_quantity):
-    conn = pymysql.connect(host='192.168.56.101', port=4567, user='project_naji', password='ghgh77',
-                           db='Convenience_store')
-    cur = conn.cursor()
+    # 상품 입고 기능
     select_product = "SELECT * FROM PRODUCT WHERE Product_no = %s"
     cur.execute(select_product, product_no)
     res = cur.fetchall()
@@ -44,13 +45,12 @@ def put_product(product_no, product_name, product_date, price, product_quantity)
         cur.execute(update_product, update_data)
 
     else:
-        # 존재하지 않는 상품은 PRODUCT 테이블에 insert
+        # 존재하지 않는 상품은 PRODUCT 테이블에 입력된 정보를 insert
         insert_product = 'INSERT INTO PRODUCT VALUES ( %s, %s, %s, %s, %s)'
         insert_data = (product_no, product_name, product_date, price, product_quantity)
         cur.execute(insert_product, insert_data)
 
     conn.commit()
-    conn.close()
 
     print("상품 입고 완료: ", product_no, product_name, product_date, price, product_quantity)
 
