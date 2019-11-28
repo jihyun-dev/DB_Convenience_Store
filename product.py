@@ -71,8 +71,6 @@ def check_product(product_no, order_quantity):
     select_quantity = "SELECT Product_quantity FROM PRODUCT WHERE Product_no = %s"
     cur.execute(select_quantity, product_no)
     res = cur.fetchall()
-    print("PNO: ", product_no)
-    print("RES: ", res)
     exist_quantity = int(res[0][0])
 
     if exist_quantity >= order_quantity:
@@ -91,14 +89,13 @@ def sell_product(product_no, order_quantity, cust_no, payment_type, emp_no, exis
     order_no = str(create_orderno() + 1)
 
          # ORDER 테이블 insert
-    insert_order = "INSERT INTO ORDERS VALUES ( %s, %s, %s, %s, %s, %s)"
+    insert_order = "INSERT INTO ORDERS VALUES (%s, %s, %s, %s, %s, %s)"
     order_data = (order_no, cust_no, emp_no, sell_date, sell_time, payment_type)
-    print(order_no, cust_no, emp_no, sell_date, sell_time, payment_type)
     cur.execute(insert_order, order_data)
 
          # ORDER_LIST 테이블 insert
-    insert_orderlist = "INSERT INTO ORDERS VALUES ( %s, %s, %s)"
-    orderlist_data = (insert_orderlist, order_no, product_no, str(order_quantity))
+    insert_orderlist = "INSERT INTO ORDER_LIST VALUES (%s, %s, %s)"
+    orderlist_data = (order_no, product_no, str(order_quantity))
     cur.execute(insert_orderlist, orderlist_data)
 
     # 2. 상품 수량 변경
